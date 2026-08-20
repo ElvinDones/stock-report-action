@@ -8,6 +8,7 @@ Kjøres av GitHub Actions-workflowen i .github/workflows/report.yml,
 men fungerer like fint lokalt: python report.py
 """
 
+import os
 from datetime import date
 import pandas as pd
 import yfinance as yf
@@ -68,6 +69,9 @@ def main():
             print(f"Feil ved henting av {ticker}: {e}")
 
     rapport = bygg_rapport(rader)
+
+    # Opprett reports/-mappa hvis den ikke finnes (Git lagrer ikke tomme mapper)
+    os.makedirs("reports", exist_ok=True)
 
     # Skriv dagens rapport + oppdater "latest" som alltid peker på siste kjøring
     with open(f"reports/{date.today().isoformat()}.md", "w") as f:
