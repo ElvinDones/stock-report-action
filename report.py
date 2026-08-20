@@ -55,6 +55,64 @@ def bygg_rapport(rader: list[dict]) -> str:
     return "\n".join(linjer) + "\n"
 
 
+def bygg_html_rapport(rader: list[dict]) -> str:
+    """Setter sammen en enkel, stilsatt HTML-side med samme tall som markdown-rapporten."""
+    rows_html = "\n".join(
+        f"""        <tr>
+          <td>{r['ticker']}</td>
+          <td>{r['siste_kurs']:.2f}</td>
+          <td class="{'pos' if r['periode_avkastning_pct'] >= 0 else 'neg'}">{r['periode_avkastning_pct']:+.2f}%</td>
+          <td>{r['volatilitet_pct']:.2f}%</td>
+        </tr>"""
+        for r in rader
+    )
+
+    return f"""<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="UTF-8">
+  <title>Aksjerapport – {date.today().isoformat()}</title>
+  <style>
+    body {{
+      font-family: -apple-system, Segoe UI, Roboto, sans-serif;
+      background: #0d1117;
+      color: #e6edf3;
+      max-width: 720px;
+      margin: 48px auto;
+      padding: 0 16px;
+    }}
+    h1 {{ font-size: 1.5rem; }}
+    .meta {{ color: #8b949e; margin-bottom: 24px; }}
+    table {{ width: 100%; border-collapse: collapse; }}
+    th, td {{
+      text-align: right;
+      padding: 10px 12px;
+      border-bottom: 1px solid #21262d;
+    }}
+    th:first-child, td:first-child {{ text-align: left; }}
+    th {{ color: #8b949e; font-weight: 500; font-size: 0.85rem; }}
+    .pos {{ color: #3fb950; }}
+    .neg {{ color: #f85149; }}
+    footer {{ margin-top: 32px; color: #8b949e; font-size: 0.8rem; }}
+  </style>
+</head>
+<body>
+  <h1>Aksjerapport</h1>
+  <p class="meta">{date.today().isoformat()} · siste {LOOKBACK_DAYS} handelsdager</p>
+  <table>
+    <thead>
+      <tr><th>Ticker</th><th>Siste kurs</th><th>Avkastning</th><th>Volatilitet</th></tr>
+    </thead>
+    <tbody>
+{rows_html}
+    </tbody>
+  </table>
+  <footer>Generert automatisk av GitHub Actions.</footer>
+</body>
+</html>
+"""
+
+
 def main():
     rader = []
     for ticker in TICKERS:
@@ -69,15 +127,21 @@ def main():
             print(f"Feil ved henting av {ticker}: {e}")
 
     rapport = bygg_rapport(rader)
+    html_rapport = bygg_html_rapport(rader)
 
-    # Opprett reports/-mappa hvis den ikke finnes (Git lagrer ikke tomme mapper)
+    # Opprett mappene hvis de ikke finnes (Git lagrer ikke tomme mapper)
     os.makedirs("reports", exist_ok=True)
+    os.makedirs("docs", exist_ok=True)
 
     # Skriv dagens rapport + oppdater "latest" som alltid peker på siste kjøring
     with open(f"reports/{date.today().isoformat()}.md", "w") as f:
         f.write(rapport)
     with open("reports/latest.md", "w") as f:
         f.write(rapport)
+
+    # docs/index.html er siden GitHub Pages serverer
+    with open("docs/index.html", "w") as f:
+        f.write(html_rapport)
 
     print(rapport)
 
