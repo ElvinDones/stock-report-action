@@ -1,11 +1,11 @@
-# Aksjerapport – 2026-10-19
+# Aksjerapport – 2026-10-20
 
 Periode: siste 30 handelsdager
 
 | Ticker | Siste kurs | Avkastning (%) | Volatilitet (%) |
 |---|---:|---:|---:|
-| EQNR.OL | 439.60 | +10.31 | 1.66 |
-| DNB.OL | 305.90 | -4.59 | 0.93 |
-| NHY.OL | 75.64 | -19.53 | 1.44 |
-| AAPL | 345.23 | +9.17 | 1.13 |
-| MSFT | 532.02 | +7.71 | 1.34 |
+| EQNR.OL | 439.70 | +5.85 | 1.46 |
+| DNB.OL | 304.60 | -4.48 | 0.93 |
+| NHY.OL | 74.14 | -20.11 | 1.45 |
+| AAPL | 342.94 | +8.45 | 1.13 |
+| MSFT | 533.52 | +8.01 | 1.35 |
